@@ -1,6 +1,7 @@
 package com.github.andrei4226.storemanagement.entity;
 
 import com.github.andrei4226.storemanagement.enums.Category;
+import com.github.andrei4226.storemanagement.exception.TagNotFoundException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
@@ -57,6 +58,12 @@ public class Product {
             throw new IllegalArgumentException("Cannot have more than 5 tags");
         }
         this.tags.add(tag);
+    }
+
+    public void removeTag(String tag) {
+        if(!this.tags.contains(tag)) {
+            throw new TagNotFoundException(tag);
+        }
     }
 
     public String getName() {

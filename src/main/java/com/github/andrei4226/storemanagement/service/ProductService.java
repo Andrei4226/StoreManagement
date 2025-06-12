@@ -32,4 +32,31 @@ public class ProductService {
         }
         return product;
     }
+    public List<Product> findByCategory(Category category) {
+        if (category == null){
+            throw new IllegalArgumentException("Category must not be null");
+        }
+        return productRepository.findByCategory(category);
+    }
+    public Product addTag(String code, String newTag) {
+        if(newTag.length() > 20 || newTag.length() < 5) {
+            throw new IllegalArgumentException("Tags must contain at most 20 characters each and list of tags must contain at most 5 elements");
+        }
+        Product product = findByCode(code);
+        product.addTag(newTag);
+        return productRepository.save(product);
+    }
+    public Product removeTag(String code, String existTag) {
+        Product product = findByCode(code);
+        product.removeTag(existTag);
+        return productRepository.save(product);
+    }
+    public Product updateListOfTags(String code, List<String> newListOfTags) {
+        if(newListOfTags.size() > 5 || newListOfTags.stream().anyMatch(tag -> tag.length() > 20)) {
+            throw new IllegalArgumentException("Tags must contain at most 5 elements of 20 characters each");
+        }
+        Product product = findByCode(code);
+        product.setTags(newListOfTags);
+        return productRepository.save(product);
+    }
 }
