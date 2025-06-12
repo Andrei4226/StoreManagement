@@ -49,6 +49,16 @@ public class Product {
         this.releaseDate = releaseDate;
     }
 
+    public void addTag(String tag){
+        if(tag == null || tag.length() > 20) {
+            throw new IllegalArgumentException("Tag must be non-null and at most 20 characters long");
+        }
+        if(this.tags.size() >= 5 ) {
+            throw new IllegalArgumentException("Cannot have more than 5 tags");
+        }
+        this.tags.add(tag);
+    }
+
     public String getName() {
         return name;
     }
