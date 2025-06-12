@@ -72,4 +72,32 @@ public class ProductService {
         }
         productRepository.delete(product);
     }
+    public Product updatePrice(String code, Double newPrice){
+        if(newPrice<=0){
+            throw new IllegalArgumentException("Price must be positive");
+        }
+        Product product = findByCode(code);
+        product.setPrice(newPrice);
+        return productRepository.save(product);
+    }
+
+    public Product updateStock(String code, int newStock){
+        if(newStock<=0){
+            throw new IllegalArgumentException("Stock must be positive");
+        }
+        Product product = findByCode(code);
+        product.setStocks(newStock);
+        return productRepository.save(product);
+    }
+
+    public List<Product> findByPriceRange(double minPrice, double maxPrice) {
+        return productRepository.findAll().stream()
+                .filter(p -> p.getPrice() >= minPrice && p.getPrice() <= maxPrice)
+                .toList();
+    }
+    public List<Product> searchByName(String name) {
+        return productRepository.findAll().stream()
+                .filter(p -> p.getName().toLowerCase().contains(name.toLowerCase()))
+                .toList();
+    }
 }
