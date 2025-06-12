@@ -59,4 +59,17 @@ public class ProductService {
         product.setTags(newListOfTags);
         return productRepository.save(product);
     }
+    public void deleteProductById(Long id) {
+        if(!productRepository.existsById(id)){
+            throw new IllegalArgumentException("Product with ID " + id + " does not exist");
+        }
+        productRepository.deleteById(id);
+    }
+    public void deleteProductByCode(String code) {
+        Product product = productRepository.findByCode(code);
+        if(product == null ) {
+            throw new ProductNotFoundException(code);
+        }
+        productRepository.delete(product);
+    }
 }
