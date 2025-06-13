@@ -2,9 +2,11 @@ package com.github.andrei4226.storemanagement.entity;
 
 import com.github.andrei4226.storemanagement.enums.Category;
 import com.github.andrei4226.storemanagement.exception.TagNotFoundException;
+import com.github.andrei4226.storemanagement.interfaces.Taggable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +15,11 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "product")
-public class Product {
+public class Product implements Taggable {
 
     @Getter
     @Setter
@@ -48,17 +51,11 @@ public class Product {
     @PastOrPresent
     private LocalDate releaseDate;
 
-    public Product(Long id, String name, Double price, Integer stocks, Category category, List<@Size(max = 20) String> tags, String code, LocalDate releaseDate) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.stocks = stocks;
-        this.category = category;
-        this.tags = tags;
-        this.code = code;
-        this.releaseDate = releaseDate;
-    }
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    private Supplier supplier;
 
+    @Override
     public void addTag(String tag){
         if(tag == null || tag.length() > 20) {
             throw new IllegalArgumentException("Tag must be non-null and at most 20 characters long");
@@ -69,10 +66,23 @@ public class Product {
         this.tags.add(tag);
     }
 
+    @Override
     public void removeTag(String tag) {
         if(!this.tags.contains(tag)) {
             throw new TagNotFoundException(tag);
         }
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 
     public String getName() {
