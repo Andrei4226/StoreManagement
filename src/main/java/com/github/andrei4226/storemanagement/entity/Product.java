@@ -15,27 +15,36 @@ import java.util.List;
 
 @NoArgsConstructor
 @Entity
+@Table(name = "product")
 public class Product {
 
     @Getter
     @Setter
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private Double price;
+    @Column(nullable = false)
     private Integer stocks;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
 
     @ElementCollection
+    @CollectionTable(name="product_tags", joinColumns = @JoinColumn(name="product_id"))
+    @Column(name="tag")
     @Size(max = 5)
     private List<@Size(max=20) String> tags = new ArrayList<>();
 
     @Column(unique = true, nullable = false)
     private String code;
 
+    @Column(nullable = false)
     @PastOrPresent
     private LocalDate releaseDate;
 

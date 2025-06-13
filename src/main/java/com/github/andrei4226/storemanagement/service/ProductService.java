@@ -100,4 +100,7 @@ public class ProductService {
                 .filter(p -> p.getName().toLowerCase().contains(name.toLowerCase()))
                 .toList();
     }
+    public List<Product> findAllProducts() {
+        return productRepository.findAll();
+    }
 }
