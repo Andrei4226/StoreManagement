@@ -1,10 +1,14 @@
 package com.github.andrei4226.storemanagement.service;
 
+import com.github.andrei4226.storemanagement.builder.ProductBuilder;
+import com.github.andrei4226.storemanagement.dto.ProductDTO;
 import com.github.andrei4226.storemanagement.entity.Product;
+import com.github.andrei4226.storemanagement.entity.Supplier;
 import com.github.andrei4226.storemanagement.enums.Category;
 import com.github.andrei4226.storemanagement.exception.DuplicateProductCodeException;
 import com.github.andrei4226.storemanagement.exception.ProductNotFoundException;
 import com.github.andrei4226.storemanagement.repository.ProductRepository;
+import com.github.andrei4226.storemanagement.repository.SupplierRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,17 +16,49 @@ import java.util.List;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final SupplierRepository supplierRepository;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, SupplierRepository supplierRepository) {
         this.productRepository = productRepository;
+        this.supplierRepository = supplierRepository;
     }
-    public Product addProduct(Product product) {
-        if(productRepository.findByCode(product.getCode()) != null) {
-            throw new DuplicateProductCodeException(product.getCode());
+    public ProductDTO mapToDTO(Product product) {
+        ProductDTO dto = new ProductDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setPrice(product.getPrice());
+        dto.setStocks(product.getStocks());
+        dto.setCategory(product.getCategory());
+        dto.setTags(product.getTags());
+        dto.setCode(product.getCode());
+        dto.setReleaseDate(product.getReleaseDate());
+        dto.setSupplierId(product.getSupplier().getId());
+        return dto;
+    }
+
+    public Product addProduct(ProductDTO productDTO) {
+        if (productRepository.findByCode(productDTO.getCode()) != null) {
+            throw new DuplicateProductCodeException(productDTO.getCode());
         }
-        if(product.getPrice() <= 0) {
+
+        if (productDTO.getPrice() == null || productDTO.getPrice() <= 0) {
             throw new IllegalArgumentException("Price must be positive");
         }
+
+        Supplier supplier = supplierRepository.findById(productDTO.getSupplierId())
+                .orElseThrow(() -> new IllegalArgumentException("Supplier not found with ID: " + productDTO.getSupplierId()));
+
+        Product product = new ProductBuilder()
+                .name(productDTO.getName())
+                .price(productDTO.getPrice())
+                .stocks(productDTO.getStocks())
+                .category(productDTO.getCategory())
+                .tags(productDTO.getTags())
+                .code(productDTO.getCode())
+                .releaseDate(productDTO.getReleaseDate())
+                .supplier(supplier)
+                .build();
+
         return productRepository.save(product);
     }
     public Product findByCode(String code) {
@@ -82,8 +118,8 @@ public class ProductService {
     }
 
     public Product updateStock(String code, int newStock){
-        if(newStock<=0){
-            throw new IllegalArgumentException("Stock must be positive");
+        if(newStock<0){
+            throw new IllegalArgumentException("Stock must be positive or equals with 0");
         }
         Product product = findByCode(code);
         product.setStocks(newStock);

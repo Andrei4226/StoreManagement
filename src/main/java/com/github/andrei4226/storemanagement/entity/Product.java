@@ -6,10 +6,7 @@ import com.github.andrei4226.storemanagement.interfaces.Taggable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -20,14 +17,11 @@ import java.util.List;
 @Entity
 @Table(name = "product")
 public class Product implements Taggable {
-
-    @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String name;
     @Column(nullable = false)
     private Double price;
@@ -52,13 +46,13 @@ public class Product implements Taggable {
     private LocalDate releaseDate;
 
     @ManyToOne
-    @JoinColumn(name = "supplier_id")
+    @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
     @Override
     public void addTag(String tag){
-        if(tag == null || tag.length() > 20) {
-            throw new IllegalArgumentException("Tag must be non-null and at most 20 characters long");
+        if (tag == null || tag.length() > 20) {
+            throw new IllegalArgumentException("Tag must be a valid value and at most 20 characters long");
         }
         if(this.tags.size() >= 5 ) {
             throw new IllegalArgumentException("Cannot have more than 5 tags");
@@ -68,9 +62,12 @@ public class Product implements Taggable {
 
     @Override
     public void removeTag(String tag) {
-        if(!this.tags.contains(tag)) {
-            throw new TagNotFoundException(tag);
-        }
+        String tagToRemove = this.tags.stream()
+                .filter(existingTag -> existingTag.equalsIgnoreCase(tag))
+                .findFirst()
+                .orElseThrow(() -> new TagNotFoundException(tag));
+
+        this.tags.remove(tagToRemove);
     }
 
     public Supplier getSupplier() {
@@ -152,6 +149,7 @@ public class Product implements Taggable {
                 ", tags=" + tags +
                 ", code='" + code + '\'' +
                 ", releaseDate=" + releaseDate +
+                ", supplierId=" + supplier.getId() +
                 '}';
     }
 }

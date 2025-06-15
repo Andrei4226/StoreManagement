@@ -1,29 +1,29 @@
 package com.github.andrei4226.storemanagement.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
+@Table(name = "supplier")
 public class Supplier {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 30)
     private String name;
+
+    @Column(nullable = false, length = 100)
     private String contact;
 
-    @OneToMany(mappedBy = "supplier")
+    @OneToMany(mappedBy = "supplier", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Product> products;
-
-    public Supplier(Long id, String name, String contact, List<Product> products) {
-        this.id = id;
-        this.name = name;
-        this.contact = contact;
-        this.products = products;
-    }
-
-    public Supplier() {
-
-    }
 
     public Long getId() {
         return id;

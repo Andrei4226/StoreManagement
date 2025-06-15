@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Interface</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 40px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        h2 {
+            margin-top: 40px;
+            color: #34495e;
+        }
+
+        form {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            max-width: 500px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        form input, form select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            margin-bottom: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        pre {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<h1>User Panel</h1>
+
+<form method="post" action="/logout" style="text-align: left; margin-bottom: 20px;">
+    <button type="submit" style="background-color: crimson;">Logout</button>
+</form>
+
+<h2>All Products</h2>
+<button onclick="getAllProducts()">Show All</button>
+<pre id="allProductsResult"></pre>
+
+<h2>Filter by Category</h2>
+<form id="filterByCategoryForm">
+    <select name="category">
+        <option value="ELECTRONICS">Electronics</option>
+        <option value="GROCERIES">Groceries</option>
+        <option value="CLOTHING">Clothing</option>
+        <option value="BOOKS">Books</option>
+        <option value="TOYS">Toys</option>
+        <option value="OTHER">Other</option>
+    </select><br>
+    <button type="submit">Search</button>
+</form>
+
+<h2>Filter by Price Range</h2>
+<form id="filterByPriceForm">
+    <input name="min" placeholder="Min Price" type="number" step="0.01"><br>
+    <input name="max" placeholder="Max Price" type="number" step="0.02"><br>
+    <button type="submit">Search</button>
+</form>
+
+<h2>Search Products by Name</h2>
+<form id="searchByNameForm">
+    <input name="name" placeholder="Partial Product Name"><br>
+    <button type="submit">Search</button>
+</form>
+
+<pre id="responseArea"></pre>
+
+<script>
+    const baseUrl = "/api/products";
+
+    async function getAllProducts() {
+        const res = await fetch(`${baseUrl}/allProducts`);
+        const data = await res.json();
+        document.getElementById("allProductsResult").innerText = JSON.stringify(data, null, 2);
+    }
+
+    document.getElementById("filterByCategoryForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const {category} = Object.fromEntries(new FormData(this));
+        const res = await fetch(`${baseUrl}/category/${category}`);
+        const data = await res.json();
+        document.getElementById("responseArea").innerText = JSON.stringify(data, null, 2);
+    });
+
+    document.getElementById("filterByPriceForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const {min, max} = Object.fromEntries(new FormData(this));
+        const res = await fetch(`${baseUrl}/price-range?min=${min}&max=${max}`);
+        const data = await res.json();
+        document.getElementById("responseArea").innerText = JSON.stringify(data, null, 2);
+    });
+
+    document.getElementById("searchByNameForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const {name} = Object.fromEntries(new FormData(this));
+        const res = await fetch(`${baseUrl}/search?name=${name}`);
+        const data = await res.json();
+        document.getElementById("responseArea").innerText = JSON.stringify(data, null, 2);
+    });
+</script>
+</body>
+</html>
