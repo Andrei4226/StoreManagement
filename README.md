@@ -4,22 +4,22 @@
 
 ---
 
-## ✅ Specifications
+## 🧾 Specifications
 
-- ✅ Java-based project using Maven
-- ✅ Framework: Spring Boot
-- ✅ Product functionalities:
+- Java-based project using Maven
+- Framework: Spring Boot
+- Product functionalities:
     - `addProduct`, `findByCode`, `findByCategory`, `addTag`,
     - `removeTag`, `updateListOfTags`, `deleteProductByCode`, `updatePrice`,
     - `updateStock`, `findByPriceRange`, `searchByName`, `findAllProducts`
-- ✅ Supplier functionalities:
+- Supplier functionalities:
     - `createSupplier`, `findAll`, `findById`, `deleteById`, `updateSupplier`
-- ✅ Authentication and role-based authorization (roles: ADMIN / USER)
-- ✅ Logging and error handling
-- ✅ Unit tests for `ProductService` and `SupplierService`
-- ✅ Java 17+ features: use of `record`
-- ✅ `data.sql` for database population and use of in-memory `H2` database
-- ✅ Project documentation (`README.md`)
+- Authentication and role-based authorization (roles: ADMIN / USER)
+- Logging and error handling
+- Unit tests for `ProductService` and `SupplierService`
+- Java 17+ features: use of `record`
+- `data.sql` for database population and use of in-memory `H2` database
+- Project documentation (`README.md`)
 
 ---
 
@@ -80,7 +80,7 @@ The database is automatically populated at startup using the `data.sql` script.
 
 Using SQL commands, you can verify/filter the data in the tables.
 
-## ✅ Running Unit Tests
+## 🧪 Running Unit Tests
 
 The project includes unit tests for the following services:
 
