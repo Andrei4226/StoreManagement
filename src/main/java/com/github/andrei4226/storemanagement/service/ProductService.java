@@ -75,10 +75,14 @@ public class ProductService {
         return productRepository.findByCategory(category);
     }
     public Product addTag(String code, String newTag) {
-        if(newTag.length() > 20 || newTag.length() < 5) {
-            throw new IllegalArgumentException("Tags must contain at most 20 characters each and list of tags must contain at most 5 elements");
+        if(newTag.length() > 20 || newTag.isBlank()) {
+            throw new IllegalArgumentException("Tags must contain between 1-20 characters");
         }
         Product product = findByCode(code);
+        List<String> initialTags = product.getTags();
+        if(initialTags.size() >=5 ) {
+            throw new IllegalArgumentException("Tag list must contain at most 5 elements");
+        }
         product.addTag(newTag);
         return productRepository.save(product);
     }
